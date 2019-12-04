@@ -20,14 +20,17 @@ library(ggplot2)
 library(markdown)
 library(devtools)
 library(stargazer)
+library(fastDummies)
+library(lfe)
 #decide the  place
 
-#importing csv file
-data_pga = read.csv('/Users/matsui/Desktop/lab.nakamuro/PGAdata.csv')
+data_pga = read.csv('/Users/matsui/Desktop/lab.nakamuro/dataset2019a.csv')
 data_pga
-#基本統計量
-summary(data_pga)
 
+output.lm <- lm(data_pga$scorerd~data_pga$handicap + data_pga$score_i + data_pga$first_year + as.factor(data_pga$tourn)*as.factor(data_pga$cat))
+summary(output.lm)
 
-output.lm <-lfe::felm(data_pga$scorerd~data_pga$handicap + data_pga$hand_i + data_pga$first_year + data_pga$cat1 + data_pga$cat1a + data_pga$cat2 + data_pga$cat3)                      
+#as.factorで特定列に含まれる文字列をダミー化
+#lfeで固定効果
+output.lm <- lfe::felm(data_pga$scorerd~data_pga$handicap + data_pga$hand_i |as.factor(data_pga$tourn)*as.factor(data_pga$cat))
 summary(output.lm)
